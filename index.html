@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Donate Now</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #ffffff;
+      padding: 40px;
+      text-align: center;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    h1, h2 {
+      color: orangered;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .radio-label {
+      position: relative;
+      padding-left: 40px;
+      cursor: pointer;
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      user-select: none;
+    }
+
+    .radio-label input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .emoji-radio {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 26px;
+      width: 26px;
+      background-color: #fff;
+      border: 3px solid orange;
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(255, 140, 0, 0.4);
+    }
+
+    .emoji-radio::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      height: 12px;
+      width: 12px;
+      background-color: orange;
+      border-radius: 50%;
+      opacity: 0;
+    }
+
+    .radio-label input:checked ~ .emoji-radio::after {
+      opacity: 1;
+    }
+
+    #thankyou {
+      font-size: 20px;
+      font-weight: bold;
+      color: #ffcc00;
+      animation: blink 1s infinite;
+      display: none;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    #donateBtn {
+      margin-top: 20px;
+      padding: 12px 30px;
+      background-color: orangered;
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 5px 10px rgba(255, 69, 0, 0.3);
+    }
+
+    #progressBox {
+      margin-top: 30px;
+    }
+
+    #progressBar {
+      width: 80%;
+      height: 24px;
+      background-color: #eee;
+      border-radius: 30px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    #progressFill {
+      height: 100%;
+      width: 0%;
+      background-color: orange;
+      text-align: center;
+      line-height: 24px;
+      color: white;
+      font-weight: bold;
+      border-radius: 30px;
+    }
+
+    #donationStats, #calcTable {
+      margin-top: 10px;
+      font-size: 16px;
+    }
+
+    #qr-section {
+      margin-top: 40px;
+    }
+
+    #qr-section img {
+      width: 200px;
+      height: 200px;
+      border: 5px solid orange;
+      border-radius: 20px;
+    }
+
+    #upi-text {
+      margin-top: 10px;
+      font-size: 16px;
+      color: #555;
+    }
+
+    #goalMessage {
+      color: green;
+      font-weight: bold;
+      font-size: 22px;
+      display: none;
+      margin-top: 20px;
+    }
+
+    #message-container {
+      text-align: left;
+      background-color: #f9f9f9;
+      padding: 25px;
+      margin-top: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    #message-container p {
+      font-size: 18px;
+      color: #333;
+      line-height: 1.7;
+      font-weight: 500;
+    }
+
+    /* Review Section Styles */
+    #thankYouMsg {
+      display: none;
+      font-size: 24px;
+      color: #E3C100;
+      font-weight: bold;
+      margin-bottom: 20px;
+      margin-top: 60px;
+    }
+
+    .heartbeat {
+      animation: heartbeat 1.2s infinite;
+    }
+
+    @keyframes heartbeat {
+      0% { transform: scale(1); }
+      14% { transform: scale(1.3); }
+      28% { transform: scale(1); }
+      42% { transform: scale(1.3); }
+      70% { transform: scale(1); }
+    }
+
+    .review-box {
+      display: flex;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      width: 350px;
+      margin: 0 auto 20px;
+    }
+
+    .review-box input {
+      padding: 10px 15px;
+      border: none;
+      outline: none;
+      width: 250px;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .review-box input::placeholder {
+      color: #aaa;
+    }
+
+    .review-box button {
+      background-color: #FFA500;
+      border: none;
+      padding: 0 20px;
+      color: #fff;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-left: 1px solid #ddd;
+    }
+
+    .review-box button:hover {
+      background-color: #ff8c00;
+      transform: scale(1.05);
+    }
+
+    .slider-container {
+      width: 90%;
+      max-width: 400px;
+      height: 720px;
+      overflow: hidden;
+      position: relative;
+      margin: 0 auto;
+    }
+
+    .slider-track {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      animation: scrollUp 40s linear infinite;
+    }
+
+    @keyframes scrollUp {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-100%); }
+    }
+
+    .review-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 15px;
+      margin: 12px 0;
+      word-wrap: break-word;
+      max-width: 100%;
+    }
+
+    .profile-pic img {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+    }
+
+    .user-id {
+      font-size: 13px;
+      font-weight: 600;
+      color: #777;
+      margin-bottom: 8px;
+      text-align: left;
+      padding-right: 15px;
+    }
+
+    .review-text {
+      margin: 0;
+      font-size: 16px;
+      font-weight: normal;
+      color: #222;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+      text-align: left;
+      margin-top: 8px;
+    }
+
+    .separator {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 15px 0;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>PLEASE AGAR APSE POSIBLE HETO PLEASE KIJIYE DONATE</h1>
+  
+  <div id="message-container">
+    <p>
+      Hi mera name Om Shinde ha
+      <br><br>
+      12th ka student hoon.
+      <br><br>
+      Abhi mere sare exams khatam ho gaye hain aur mujhe apni study aage continue karni hai.
+      <br><br>
+      Mujhe paise ki zarurat hai, isliye maine yeh web page banaya hai.
+      <br><br>
+      Yeh web page maine ek AI website generator se banaya hai, shayad meri help ho jaye.
+      <br><br>
+      Mujhe ₹10 lakh ki zarurat hai. Agar aap se ho sake toh please dijiye.
+      <br><br>
+      Aap log din me kam se kam ₹50 kharcha karte honge, toh please agar aapke liye possible ho, toh bas mujhe financially madad dijiye one time 
+      <br><br>
+      Main 7th class se kaam kar raha hoon, aur aaj 12th ke baad bhi savings achi nahi hain
+      <br><br>
+      ki main apna education ka pura kharcha kar sakoon.
+      <br><br>
+      Quki middle-class family ke liye ₹10 lakh sach mein  bohot zyada hai.
+      <br><br>
+      Itna pessa to gharme bank me nahi hota 
+      Jitna mujhe padne keliye chaiye 
+      <br><br>
+      Mujhe pata hai ki aap log mere upar wishwash  kese karenge, par sach mein mujhe madad ki zarurat hai.
+      <br><br>
+      Yeanahi ki me ladkiye kahi dekhta bahar bakchodi nahi karta par mujhe sach me apne gharki paristiti 
+      Chage karni he 
+      <br><br>
+      Agar ajj ap logg meri insahiyat ke nate meri madat karenge to bavishme mebhi kisior ki madat karunga 
+      <br><br>
+      Mere paas galat kaam ka kabhi option he 
+      <br><br>
+      par agar main usme pakda gaya, toh sab kuch khatam ho jayega Mera sapne 
+      <br><br>
+      apni education complete karoon aur  apni family ko acha future de saku .
+      <br><br>
+      Me koi insta pe bada channel nahi chlata ya fhir ΥouTube channel 
+      <br><br>
+      Bass sube nicloo kamm pe ratt ko ghar 
+      Dinka 250rupaye mute he mahineke 7,500rupaye
+      Miltehe wobhi agar chuti leli to 
+      <br><br>
+      Ussdinka Paisa nahi milega 
+      <br><br>
+      To itna to samaj gaya ki yesehi kamm karte rehgaya to kuch nahi hoga mera 
+      <br><br>
+      Is page me user aapka koibhi Data liya nahi jaye no any access matlab ki kitne logone donate Kiya he wobhi achese nahi dikhega na review section me review dikhega 
+      <br><br> 
+      kyunki isme backend me apka personal information data save nahi hora isliye
+      <br><br>
+      Mene ye apke vishwaash keliye hi kiya he 
+      <br><br>
+      ₹10lakh rupiya to yesa kamm karke to kabhi nahi jamma paunga
+      <br><br>
+      To bass isliye aplogoki help mang rahu
+      <br><br>
+      Kay pure india me itne log bhi nahi honge jomeri madat kapayege 
+      <br><br>
+      • ₹50 x 20,000 log = ₹10,00,000<br>
+      • ₹100 x 10,000 log = ₹10,00,000<br>
+      • ₹200 x 5,000 log = ₹10,00,000<br>
+      • ₹500 x 500 log = ₹10,00,000<br><br>
+      programmer nahi hoon, yeh web page maine website banane wali AI site se banaya hai 
+      <br><br>
+      Yesab mujhe mere jigri dost Nehi bola ki yesehi web page bana ki trykar ahar sach me teri help hogaito accha hojayega 
+      <br><br>
+      Or use pata he me kon hu par vo yesa kabhi nahi  nahinkarega kyunki hamm 2no 1th class se sath mehe 
+      <br><br>
+      Uska financial backing acha he or wo dill kabhi sachahe 
+      Lekin itne 10lakh ki help to wobahi karsakta mujhe 
+      <br><br>
+      I love you my bestfriend 
+      <br><br>
+      1hi dost mila he lekin sacha
+      <br><br>
+      Yesab karne ke pehle 
+      <br><br>
+      Gab college dupahar ki thi tab night me kamm pejata tha me abhi dinn me jata hu 
+      <br><br>
+      AI se pucha, ki main sahi kar raha hoon ya nahi, aur usne bola ki madad ho sakti hai.
+      <br><br>
+      Exam ki date 4/03/2025 hai, 
+      <br><br>
+      April, July, and August Tak result mell jayega pata chalega
+      <br><br>
+      Mera hope hai ki percentage achi aaye, kyunki maine exam me apna 100% diya hai 
+      <br><br>
+      Web ka kuch set up
+      <br><br>
+      Mene isme 10lakh ka limit set Kiya he 
+      <br><br>
+      Age pese jama ho gaye ho fhir ye page aupne ap hi band ho jayega. Yebass sacssefull donations payments hi count karega or badd koi payment bhi karenge tobhi wo nahi hoga 
+      <br><br>
+      Page se pay ment wala option hat jayega direct usi time 
+      <br><br>
+      Agar koi Hacker tak ye page pocha he to please bhai 
+      Isko kuch matt karna 
+      <br><br>
+      Quki ye 1  AI artificial intelligence generated web page he koi high security nahi he to brother please kuch matt karna yar 
+      <br><br>
+      Mere bank account mein ₹20,000 saving hai 
+      <br><br>
+      Family ko nahi bol sakta ki main paisa jama kar raha hoon. 
+      <br><br>
+      Aur yeh identity bhi nahi de sakta ki mere yeh doston ko pata chalega ki main kaun hoon 
+      <br><br>
+      Unke jariye ghartak poch sakta heye isliye nahi dera ho
+      <br><br>
+      Or ye sab web wahara pehli bar kar rahi mene yesa kabhi socha hi nahi tha 
+      <br><br>
+      Yesab pehli bar kar rahi isliye thoda  darr lag rahe 
+      <br><br>
+      Coding wahara to patathi lekin abhi yesa bhi karna padega yesa socha nahi tha 
+      <br><br>
+      Mere life ka pehla web page yesa donation wala
+      <br><br>
+      Wobhi 1 AI generated we page 
+      <br><br>
+      Abhi to kabhito bohot Ajeeb sa lagta he 
+      <br><br>
+      Dukhi bhi hu
+      <br><br> 
+      pareshan bhi hu 
+      <br><br>
+      Ratt ko suicide wale through atehe
+      <br><br>
+      Kabhi bohot demotivate sa lagta he 
+      Isiliye 
+      <br><br>
+      Sabkuch cantrol me karta he sala 
+      <br><br>
+      Yesa lagta he ki 10lakh kaha se ayenge pagal hukayme  
+      <br><br>
+      Admition ke bad ke 4 sal to me
+      <br><br>
+      kesebhi nikal hi lunga part-time job karke
+      Wesebhi Study to achihe meri 
+      <br><br>
+      but admition amount mere bank account me nahi he itna 
+      <br><br>
+      Agar Paisa hoga account metabhi admition ke paunga 
+      <br><br>
+      Nahi to fhir wahi jindagi kisikebhi yaha kamm pehana 
+      Or wesihi jindagi gurajarna 
+      <br><br>
+      Na family khush na me rahunga hamesha regret rahega kime kar nahi paya 
+      <br><br>
+      Mene acha likha he ya bura mujhe nahinpata par isme mene apni problems or situation boli he
+      <br><br>
+      Ahar apse ye help nahi hosaki to koi batt nahi Parr kamse kam 
+      <br><br>
+      Un logo koto shear kare jo sach me payment kardennge 
+      <br><br>
+      Problems toh hain, par aapko kaise bataun par fhir bhi mene apko Jo bhi mere life kebare bola he wosach he 
+      <br><br>
+      Mujhe pata hai ki ₹10 lakh ek bada amount hai, par agar hazaron log sirf ₹50, ₹100 ya ₹200 bhi donate karein, to main apni life badal sakta hoon.
+      <br><br>
+      Agar vishwas hoga ya aapki hesiyat hai toh madad kar sakte hain apmeri 
+      Jaldi hoga aur main apne sapno ki udan jald hi lunga.
+      <br><br>
+      Me koi writer to nahi par mene Puri koshish kihe apko boll neki 
+      <br><br>
+      Agar apko kuch bura laga hoga to I'm sorry 
+      <br><br> 
+      dillse
+      <br><br> 
+      1 batt bollna chahta hu sorry par mujhe ye boll kar halka messus hoga 
+      <br><br>
+      Jo ladki pasand thi wobhi nnahi mili 
+      <br><br>
+      Thank 
+      <br><br> 
+      Yeh sab likhna sach mein asaan nahi hai,sach me apne apko expose karne me bohot dukh hota he  par aapka support mere liye bahut zaroori hai.
+    </p>
+  </div>
+
+  <h2>Select Donation Amount</h2>
+  <div class="radio-group">
+    <label class="radio-label">₹50
+      <input type="radio" name="amount" value="50" onchange="showThanks()">
+      <span class="emoji-radio"></span>
+    </label>
+    <label class="radio-label">₹100
+      <input type="radio" name="amount" value="100" onchange="showThanks()">
+      <span class="emoji-radio"></span>
+    </label>
+    <label class="radio-label">₹200
+      <input type="radio" name="amount" value="200" onchange="showThanks()">
+      <span class="emoji-radio"></span>
+    </label>
+    <label class="radio-label">₹500
+      <input type="radio" name="amount" value="500" onchange="showThanks()">
+      <span class="emoji-radio"></span>
+    </label>
+  </div>
+
+  <div id="thankyou">Thanks for help!</div>
+  <button id="donateBtn" onclick="donate()">Donate Now</button>
+
+  <div id="progressBox">
+    <div id="progressBar">
+      <div id="progressFill">0%</div>
+    </div>
+    <div id="donationStats">
+      ₹<span id="totalAmount">0</span> collected from <span id="donorsCount">0</span> people  
+      <br>(Goal: ₹10,00,000)
+    </div>
+  </div>
+
+  <div id="calcTable">
+    ₹50: <span id="count50">0</span> | ₹100: <span id="count100">0</span> | ₹200: <span id="count200">0</span> | ₹500: <span id="count500">0</span>  
+    <br><b>Total: ₹<span id="totalCalc">0</span></b>
+  </div>
+
+  <div id="goalMessage">Goal of ₹10,00,000 has been reached. No more donations accepted.</div>
+
+  <div id="qr-section">
+    <h3>Scan & Pay via UPI</h3>
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=shindeom750@okicici&pn=Shinde&cu=INR" alt="UPI QR Code">
+    <div id="upi-text">UPI ID: <strong>shindeom750@okicici</strong></div>
+  </div>
+
+  <!-- Review Section -->
+  <h1 id="thankYouMsg">Thanks for kind support!</h1>
+
+  <div class="review-box">
+    <input type="text" placeholder="Please share your review..." id="reviewInput">
+    <button id="reviewBtn">Submit</button>
+  </div>
+
+  <div class="slider-container">
+    <div class="slider-track" id="reviewList"></div>
+  </div>
+
+  <!-- Gun.js for real-time database -->
+  <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+  <script>
+    // Initialize Gun.js with multiple peers for reliability
+    const gun = Gun({
+      peers: [
+        'https://gun-manhattan.herokuapp.com/gun',
+        'https://peer.wallie.io/gun'
+      ],
+      localStorage: false,
+      radisk: false
+    });
+
+    // Reference to our data
+    const donations = gun.get('donations');
+    const reviews = gun.get('reviews');
+
+    // Donation Section Variables
+    let total = 0;
+    let count = 0;
+    let count50 = 0, count100 = 0, count200 = 0, count500 = 0;
+    const goal = 1000000;
+
+    // Load donation data from Gun.js
+    donations.on((data, key) => {
+      if (data) {
+        total = data.total || 0;
+        count = data.count || 0;
+        count50 = data.count50 || 0;
+        count100 = data.count100 || 0;
+        count200 = data.count200 || 0;
+        count500 = data.count500 || 0;
+
+        updateDonationUI();
+      }
+    }, {change: true});
+
+    // Load existing reviews and listen for new ones
+    const loadedReviewIds = new Set();
+    
+    function loadReviews() {
+      reviews.map().once((review, id) => {
+        if (review && id !== '_' && !loadedReviewIds.has(id)) {
+          loadedReviewIds.add(id);
+          addReviewToUI(review.text, id);
+        }
+      });
+    }
+
+    // Real-time listener for new reviews
+    reviews.map().on((review, id) => {
+      if (review && id !== '_' && !loadedReviewIds.has(id)) {
+        loadedReviewIds.add(id);
+        addReviewToUI(review.text, id);
+      }
+    });
+
+    function showThanks() {
+      const thankyou = document.getElementById('thankyou');
+      thankyou.style.display = 'block';
+      setTimeout(() => {
+        thankyou.style.display = 'none';
+      }, 3000);
+    }
+
+    function updateDonationUI() {
+      document.getElementById('totalAmount').textContent = total.toLocaleString('en-IN');
+      document.getElementById('donorsCount').textContent = count.toLocaleString('en-IN');
+      document.getElementById('count50').textContent = count50.toLocaleString('en-IN');
+      document.getElementById('count100').textContent = count100.toLocaleString('en-IN');
+      document.getElementById('count200').textContent = count200.toLocaleString('en-IN');
+      document.getElementById('count500').textContent = count500.toLocaleString('en-IN');
+      document.getElementById('totalCalc').textContent = total.toLocaleString('en-IN');
+
+      const percent = Math.min((total / goal) * 100, 100).toFixed(2);
+      const fill = document.getElementById('progressFill');
+      fill.style.width = percent + "%";
+      fill.textContent = percent + "%";
+
+      if (total >= goal) {
+        const donateBtn = document.getElementById('donateBtn');
+        donateBtn.disabled = true;
+        donateBtn.textContent = "Goal Reached!";
+        document.getElementById('qr-section').style.display = "none";
+        document.getElementById('goalMessage').style.display = "block";
+      }
+    }
+
+    function donate() {
+      const selected = document.querySelector('input[name="amount"]:checked');
+      if (!selected) {
+        alert("Please select an amount first!");
+        return;
+      }
+
+      const amount = parseInt(selected.value);
+      
+      // Update local variables
+      total += amount;
+      count++;
+
+      switch(amount) {
+        case 50: count50++; break;
+        case 100: count100++; break;
+        case 200: count200++; break;
+        case 500: count500++; break;
+      }
+
+      // Save to Gun.js
+      donations.put({
+        total: total,
+        count: count,
+        count50: count50,
+        count100: count100,
+        count200: count200,
+        count500: count500,
+        updatedAt: Date.now()
+      });
+
+      updateDonationUI();
+      showThanks();
+
+      // Open UPI payment directly
+      const upiURL = `upi://pay?pa=shindeom750@okicici&pn=Shinde&am=${amount}&cu=INR`;
+      window.open(upiURL, '_blank');
+    }
+
+    // Review Section Script
+    const reviewBtn = document.getElementById('reviewBtn');
+    const reviewInput = document.getElementById('reviewInput');
+    const thankYouMsg = document.getElementById('thankYouMsg');
+    const reviewList = document.getElementById('reviewList');
+    let msgTimer;
+
+    function showThankYouMessage() {
+      thankYouMsg.style.display = 'block';
+      thankYouMsg.classList.add('heartbeat');
+      msgTimer = setTimeout(() => {
+        thankYouMsg.style.display = 'none';
+        thankYouMsg.classList.remove('heartbeat');
+      }, 3000);
+    }
+
+    function addReviewToUI(reviewText, id) {
+      const reviewItem = document.createElement('div');
+      reviewItem.className = 'review-item';
+      if (id) {
+        reviewItem.id = 'review-' + id;
+      }
+
+      const avatar = document.createElement('div');
+      avatar.className = 'profile-pic';
+      avatar.innerHTML = '<img src="https://i.ibb.co/zWF3yFZ7/73d8bfa4864f.jpg" alt="Supporter">';
+
+      const textDiv = document.createElement('div');
+      textDiv.innerHTML = `
+        <div class="user-id">Kind Supporter</div>
+        <div class="review-text">${reviewText}</div>
+      `;
+
+      reviewItem.appendChild(avatar);
+      reviewItem.appendChild(textDiv);
+      reviewList.appendChild(reviewItem);
+    }
+
+    reviewBtn.addEventListener('click', () => {
+      const reviewText = reviewInput.value.trim();
+      if (reviewText) {
+        const reviewId = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+        
+        // Add to GunDB
+        reviews.get(reviewId).put({ 
+          text: reviewText,
+          date: Date.now() 
+        });
+        
+        // Add to UI
+        addReviewToUI(reviewText, reviewId);
+        
+        // Clear input and show message
+        reviewInput.value = '';
+        showThankYouMessage();
+      }
+    });
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadReviews();
+      
+      // Check if goal is already reached
+      if (total >= goal) {
+        const donateBtn = document.getElementById('donateBtn');
+        donateBtn.disabled = true;
+        donateBtn.textContent = "Goal Reached!";
+        document.getElementById('qr-section').style.display = "none";
+        document.getElementById('goalMessage').style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>
